@@ -1,0 +1,41 @@
+name: Deploy to Kubernetes with ArgoCD
+
+on:
+  push:
+    branches:
+      - main  # Você pode configurar para rodar quando houver push em outras branches também
+  pull_request:
+    branches:
+      - main  # Ou quando houver PR para a branch main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the code
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Set up kubectl
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v2
+        with:
+          kubectl-version: 'latest'
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+
+      # Set up ArgoCD CLI
+      - name: Set up ArgoCD CLI
+        run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/download/v2.5.0/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+
+      # Login no ArgoCD
+      - name: Log in to ArgoCD
+        run: |
+          argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
+
+      # Sincronizar o aplicativo no ArgoCD (trigger de deploy)
+      - name: Sync ArgoCD Application
+        run: |
+          argocd app sync ms-example-app --prune --timeout 600
