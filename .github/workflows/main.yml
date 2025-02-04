@@ -33,7 +33,7 @@ jobs:
       # Login no ArgoCD
       - name: Log in to ArgoCD
         run: |
-          argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
+          argocd login ${{ secrets.ARGOCD_SERVER }}:8080 --username ${{ secrets.ARGOCD_USERNAME }} --password ${{ secrets.ARGOCD_PASSWORD }} --insecure
 
       # Sincronizar o aplicativo no ArgoCD (trigger de deploy)
       - name: Sync ArgoCD Application
