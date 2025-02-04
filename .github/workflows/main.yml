@@ -19,9 +19,9 @@ jobs:
 
       # Set up kubectl
       - name: Set up Kubernetes
-        uses: azure/setup-kubectl@v2
+        uses: azure/k8s-set-context@v4
         with:
-          kubectl-version: 'latest'
+          method: kubeconfig
           kubeconfig: ${{ secrets.KUBECONFIG }}
 
       # Set up ArgoCD CLI
